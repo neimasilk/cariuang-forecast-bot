@@ -1,0 +1,32 @@
+name: Forecast on new FutureEval questions
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Questions are open for only ~3 hours, so check every 20 minutes (offset from the hour).
+    # Already-forecasted questions are skipped by the bot.
+    - cron: "7,27,47 * * * *"
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  forecast_job:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run bot
+        run: python main.py
+        env:
+          METACULUS_TOKEN: ${{ secrets.METACULUS_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
