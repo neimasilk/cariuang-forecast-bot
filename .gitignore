@@ -179,5 +179,3 @@ temp/
 *.log
 .playwright-mcp/
 
-# workflow added via the GitHub web UI (token lacks the workflow scope)
-.github/workflows/
